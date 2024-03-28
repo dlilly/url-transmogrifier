@@ -1,7 +1,8 @@
-import db from "./urldb"
+import db, { SlugType } from "./urldb"
+import { generate } from 'random-words'
 
 export class URLEntry {
-    url: string
+    url: URL
     createdBy?: string
 
     slug: string
@@ -9,21 +10,21 @@ export class URLEntry {
     timesTransmogrified: number
     createdAt: Date
 
-    constructor(url: string, createdBy?: string) {
+    constructor(url: URL, pronounceableSlug: boolean, createdBy?: string) {
         this.url = url
         this.createdBy = createdBy
         this.createdAt = new Date()
         this.timesVisited = 0
         this.timesTransmogrified = 0
-        this.slug = db.getUniqueSlug()
+        this.slug = db.getUniqueSlug(pronounceableSlug)
     }
 }
 
-const transmogrify = (url: string, createdBy?: string): URLEntry => {
+const transmogrify = (url: URL, pronounceableSlug: boolean = false, createdBy?: string): URLEntry => {
     let transmogrified = db.lookupByURL(url)
 
     if (!transmogrified) {
-        transmogrified = new URLEntry(url, createdBy)
+        transmogrified = new URLEntry(url, pronounceableSlug, createdBy)
     }
 
     transmogrified.timesTransmogrified++
@@ -32,8 +33,10 @@ const transmogrify = (url: string, createdBy?: string): URLEntry => {
     return transmogrified
 }
 
-export default {
+const URLManager = {
     transmogrify,
     lookup: db.lookup,
     save: db.saveEntry
 }
+
+export default URLManager

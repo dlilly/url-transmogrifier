@@ -1,11 +1,5 @@
-import Image from "next/image";
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
-
-import Card from '@mui/material/Card';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import CardContent from '@mui/material/CardContent';
 
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -46,10 +40,10 @@ export default function RedirectPage() {
           router.push(data.url)
         }, 1500)
       })
-  }, [router.query])
+  }, [router, router.query])
 
   if (isLoading) return <p>Loading...</p>
-  if (!data) return <p>No profile data</p>
+  if (!data) return <p>No data</p>
 
   return (
     <Container maxWidth="lg">
@@ -62,9 +56,12 @@ export default function RedirectPage() {
           alignItems: 'center',
         }}
       >
-        <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-          Redirecting you to: {data['url']}<br/>
-          This is the {getOrdinal(data['timesVisited'])} time this URL has been visited!
+        <Typography variant="h4" component="h1" sx={{ mb: 2, alignItems: 'center' }}>
+          <h4>Redirecting you to</h4>
+          <br/>
+          <h1>{data['url']}</h1>
+          <br/>
+          <h4>This is the {getOrdinal(data['timesVisited'])} time this URL has been visited!</h4>
         </Typography>
       </Box>
     </Container>
