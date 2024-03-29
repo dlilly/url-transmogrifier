@@ -5,22 +5,29 @@ import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { Button, Checkbox, FormControlLabel, FormGroup, Radio, RadioGroup, TextField } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material";
 import { TransmogrifiedURL } from "@/app/components/transmogrified";
 
 export default function Home() {
   const [url, setUrl] = useState('')
   const [data, setData] = useState({})
-  const [validateLive, setValidateLive] = useState(true)
   const [pronounceableSlug, setPronounceableSlug] = useState(false)
 
   const buttonClicked = () => {
-    console.log(`/api/transmogrify?url=${url}&validateLive=${validateLive}&pronounceableSlug=${pronounceableSlug}`)
-    fetch(`/api/transmogrify?url=${url}&validateLive=${validateLive}&pronounceableSlug=${pronounceableSlug}`)
+    fetch(`/api/transmogrify?url=${url}&pronounceableSlug=${pronounceableSlug}`)
       .then((res) => res.json())
       .then((data) => {
         setData(data)
       })
+  }
+
+  const urlFieldUpdated = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      new URL(evt.target.value)
+      setUrl(evt.target.value)
+    } catch (error) {      
+      setUrl('')
+    }
   }
 
   return (
@@ -36,20 +43,15 @@ export default function Home() {
       >
         <Typography variant="body1" component="h1" sx={{ mb: 2 }}>
           <Stack>
-            <Stack direction="row">
-              
-            </Stack>
             <div>URL Transmogrifier <Image src={'/transmogrifier.jpg'} alt={""} width={50} height={50} /></div>
-            <div>Enter a URL to Transmogrify</div>
-            <TextField id="url" label="URL" variant="outlined" onChange={(evt) => { setUrl(evt.target.value); }}>{url}</TextField>
+            <TextField id="url" label="URL to transmogrify" variant="outlined" onChange={urlFieldUpdated}>{url}</TextField>
 
             <FormGroup>
-              <FormControlLabel control={<Checkbox defaultChecked onChange={(evt) => { setValidateLive(evt.target.checked); }} />} label="Validate URL is live?" />
               <FormControlLabel control={<Checkbox onChange={(evt) => { setPronounceableSlug(evt.target.checked); }} />} label="Pronounceable slug?" />
             </FormGroup>
 
-            <Button variant="contained" onClick={buttonClicked}>Transmogrify</Button>
-            {data && <TransmogrifiedURL transmogrified={data} />}
+            <Button variant="contained" onClick={buttonClicked} disabled={url === ''}>Transmogrify</Button>
+            {data && <TransmogrifiedURL data={data} />}
           </Stack>
         </Typography>
       </Box>

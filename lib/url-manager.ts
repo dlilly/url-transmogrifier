@@ -1,5 +1,4 @@
-import db, { SlugType } from "./urldb"
-import { generate } from 'random-words'
+import db from "./urldb"
 
 export class URLEntry {
     url: URL

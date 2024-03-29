@@ -2,16 +2,13 @@ import { join } from 'path'
 import fs from 'fs-extra'
 import { URLEntry } from './url-manager'
 import { generate } from 'random-words'
+import { HashMap } from './util'
 
 const DB_PATH = join(process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'] || __dirname, '.url-transmogrifier')
 const URL_FILE_PATH = `${DB_PATH}/urls.json`
 
 // ensure the DB_PATH directory exists
 fs.mkdirpSync(DB_PATH)
-
-interface HashMap<T> {
-    [key: string]: T
-}
 
 // initialize the DB from file
 let urlEntries: HashMap<URLEntry> = fs.existsSync(URL_FILE_PATH) ? fs.readJSONSync(URL_FILE_PATH) : {}

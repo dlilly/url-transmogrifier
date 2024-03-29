@@ -4,25 +4,12 @@ import { useState, useEffect } from 'react'
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { URLEntry } from '@/lib/url-manager';
 
-function getOrdinal(n: number) {
-  let ord = 'th';
-
-  if (n % 10 == 1 && n % 100 != 11) {
-    ord = 'st';
-  }
-  else if (n % 10 == 2 && n % 100 != 12) {
-    ord = 'nd';
-  }
-  else if (n % 10 == 3 && n % 100 != 13) {
-    ord = 'rd';
-  }
-
-  return `${n}${ord}`;
-}
+import { getOrdinal } from '@/lib/util';
 
 export default function RedirectPage() {
-  const [data, setData] = useState(null)
+  const [data, setData] = useState<URLEntry | undefined>()
   const [isLoading, setLoading] = useState(true)
 
   const router = useRouter()
@@ -36,9 +23,11 @@ export default function RedirectPage() {
         setData(data)
         setLoading(false)
 
-        setTimeout(() => {
-          router.push(data.url)
-        }, 1500)
+        if (data.url) {
+          setTimeout(() => {
+            router.push(data.url)
+          }, 1500)
+        }
       })
   }, [router, router.query])
 
@@ -56,13 +45,20 @@ export default function RedirectPage() {
           alignItems: 'center',
         }}
       >
-        <Typography variant="h4" component="h1" sx={{ mb: 2, alignItems: 'center' }}>
-          <h4>Redirecting you to</h4>
-          <br/>
-          <h1>{data['url']}</h1>
-          <br/>
-          <h4>This is the {getOrdinal(data['timesVisited'])} time this URL has been visited!</h4>
-        </Typography>
+        {
+          data.url && <Typography variant="h4" component="h1" sx={{ mb: 2, alignItems: 'center' }}>
+            <h4>Redirecting you to</h4>
+            <br />
+            <h1>{data.url.toString()}</h1>
+            <br />
+            <h4>This is the {getOrdinal(data['timesVisited'])} time this URL has been visited!</h4>
+          </Typography>
+        }
+        {
+          !data.url && <Typography variant="h4" component="h1" sx={{ mb: 2, alignItems: 'center' }}>
+            <h4>Couldn't find URL for slug {router.query.slug}!</h4>
+          </Typography>
+        }
       </Box>
     </Container>
   )
